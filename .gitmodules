@@ -1,0 +1,3 @@
+[submodule "DevOpsProjects"]
+	path = DevOpsProjects
+	url = https://github.com/baurkika/DevOpsProjects.git
