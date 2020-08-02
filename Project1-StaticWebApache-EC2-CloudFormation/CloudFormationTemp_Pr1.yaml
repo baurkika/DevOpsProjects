@@ -37,7 +37,7 @@ Resources:
       ImageId: !Ref ImageId
       Tags:
         - Key: Name
-          Value: 'Web Server of ClaruswayPr1'
+          Value: !Ref 'AWS::StackName'
       UserData:
         'Fn::Base64': !Sub |
           #!/bin/bash
