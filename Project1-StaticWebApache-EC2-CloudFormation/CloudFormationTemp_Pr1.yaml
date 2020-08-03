@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  AWS CloudFormation Template EC2InstanceWithSecurityGroupSample for Clarusway with Apache, AWS Linux2
+  AWS CloudFormation Template EC2InstanceWithSecurityGroupSample for Clarusway with Apache, 
+  AWS Linux2 and EC2 Name Tag that should be as a "Web Server of StackName".
 Parameters:
   KeyName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
