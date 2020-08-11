@@ -108,7 +108,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Enable SSH access via port 22 and access to port 80
-      GroupName: AllowLB2EC2
+      GroupName: AllowLoadBal2EC2
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: '22'
@@ -131,7 +131,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: '80'
           ToPort: '80'
-          SourceSecurityGroupName: AllowLB2EC2
+          SourceSecurityGroupName: AllowLoadBal2EC2
       VpcId: !Ref VpcId
 Outputs:
   LoadBalancerDNSName:
