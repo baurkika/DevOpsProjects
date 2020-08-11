@@ -41,10 +41,10 @@ Resources:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Properties:
       KeyName: !Ref KeyName
-      ImageId: "ami-02354e95b39ca8dec"
+      ImageId: ami-02354e95b39ca8dec
       InstanceType: !Ref InstanceType
       SecurityGroups: 
-        - !Ref LBSecurityGroup
+        - !Ref EC2SecurityGroup
       UserData:
         'Fn::Base64': !Sub |
           #!/bin/bash
@@ -52,10 +52,10 @@ Resources:
           yum install httpd -y
           chmod -R 777 /var/www/html
           cd /var/www/html
-          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project1-StaticWebApache-EC2-CloudFormation/static-web/cat0.jpg
-          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project1-StaticWebApache-EC2-CloudFormation/static-web/cat1.jpg
-          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project1-StaticWebApache-EC2-CloudFormation/static-web/cat2.jpg
-          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project1-StaticWebApache-EC2-CloudFormation/static-web/index.html
+          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project2-StaticWeb-ALB-ASG/static-web/cat0.jpg
+          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project2-StaticWeb-ALB-ASG/static-web/cat1.jpg
+          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project2-StaticWeb-ALB-ASG/static-web/cat2.jpg
+          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project2-StaticWeb-ALB-ASG/static-web/index.html
           systemctl start httpd
           systemctl enable httpd
   LoadBalancer:
@@ -108,6 +108,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Enable SSH access via port 22 and access to port 80
+      GroupName: AllowLB2EC2
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: '22'
@@ -117,6 +118,20 @@ Resources:
           FromPort: '80'
           ToPort: '80'
           CidrIp: !Ref AllowedIP
+      VpcId: !Ref VpcId
+  EC2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22 and access to port 80
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: !Ref AllowedIP
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          SourceSecurityGroupName: AllowLB2EC2
       VpcId: !Ref VpcId
 Outputs:
   LoadBalancerDNSName:
