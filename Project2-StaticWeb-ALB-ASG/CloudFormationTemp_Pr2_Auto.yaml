@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  AWS CloudFormation Template to create Load Balancer with Target Group, Auto Scaling Group
+  Launch Configuration for Clarusway with Apache, AWS Linux2 and EC2 Name Tag that should be as a "Web Server of StackName".
+  EC2 with 
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  VpcId:
+    Type: 'AWS::EC2::VPC::Id'
+    Description: VpcId of your existing Virtual Private Cloud (VPC)
+    ConstraintDescription: >-
+      must be the VPC Id of an existing Virtual Private Cloud. Outbound traffic
+      for the default security group associated with this VPC should be enabled.
+Resources:
+  LaunchConfig:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: ami-02354e95b39ca8dec
+      InstanceType: t2.micro
+      SecurityGroups: 
+        - !Ref EC2SecurityGroup
+      UserData:
+        'Fn::Base64': !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install httpd -y
+          chmod -R 777 /var/www/html
+          cd /var/www/html
+          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project2-StaticWeb-ALB-ASG/static-web/cat0.jpg
+          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project2-StaticWeb-ALB-ASG/static-web/cat1.jpg
+          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project2-StaticWeb-ALB-ASG/static-web/cat2.jpg
+          wget https://raw.githubusercontent.com/baurkika/DevOpsProjects/master/Project2-StaticWeb-ALB-ASG/static-web/index.html
+          systemctl start httpd
+          systemctl enable httpd
+  LoadBalancer:
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Name: Project2LoadBalancer
+      SecurityGroups: 
+        - !Ref LBSecurityGroup
+      AvailabilityZones: 
+        Fn::GetAZs: ""
+      #Subnets: !Ref Subnets
+      Type: application          
+  LoadBalancerListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref TargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP  
+  TargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Name: Project2TargetGroup
+      TargetType: instance
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId: !Ref VpcId  
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: AutoScalingGroup
+      DesiredCapacity: 2
+      HealthCheckGracePeriod: 90
+      HealthCheckType: ELB
+      LaunchConfigurationName: !Ref LaunchConfig
+      TargetGroupARNs:
+        - !Ref TargetGroup
+      MaxSize: 3
+      MinSize: 1
+      Tags: 
+        - Key: Name
+          Value: !Sub 'Web Server of ${AWS::StackName}'
+          PropagateAtLaunch: "true"
+      AvailabilityZones: 
+        Fn::GetAZs: ""
+      #VPCZoneIdentifier: !Ref Subnets
+  LBSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22 and access to port 80
+      GroupName: AllowLoadBal2EC2
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+  EC2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22 and access to port 80
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          SourceSecurityGroupName: AllowLoadBal2EC2
+      VpcId: !Ref VpcId
+Outputs:
+  LoadBalancerDNSName:
+    Description: The DNSName of the Load Balancer
+    Value: !GetAtt LoadBalancer.DNSName
