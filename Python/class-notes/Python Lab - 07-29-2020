@@ -1,0 +1,163 @@
+Python Lab - 07/29/2020 - 07:00pm (EST)
+
+
+True and not [] or 'False' or {'True'}
+True and True or 'False' or {'True'}
+True or 'False' or {'True'}
+True
+
+
+A = True
+B = False
+
+logic = (A or B) and (not A)
+logic = True and False
+logic = False
+
+Homework : If you had deposited a coin on the cryptocurrency exchange that brought 7% fixed profit daily for a week, how much would your $ 1000 reach at the end of the 7th day?
+
+Solution:
+investment = 1000 * (1+0.07) ** 7
+
+print(investment)
+
+
+Problem: What is the output of this code? 
+
+print(int("5" + "1"))
+print(str("5" + "1"))
+print("5" + "1")
+
+Answer:
+51
+51
+51
+
+
+
+
+Problem: Write a short Python program that asks the user to enter Celsius temperature (it can be a decimal number), converts the entered temperature into Fahrenheit degree and prints the result.
+
+Solution:
+print("Enter celcius value: ", end="")
+celcius = input()
+fahrenheit = float(celcius) * 1.8 + 32
+print("Fahrenait values is", fahrenheit)
+
+
+
+Problem: Write a short Python program that asks the user to enter a distance (it can be a decimal number) in kilometers, converts the entered distance into miles and prints the result.
+
+Solution:
+
+km = float(input("Enter a kilometer value :"))
+miles = km / 1.6
+print("Conversion is ", miles)
+
+
+print("Enter the distance in km:", end ="")
+distance_in_km = float(input())
+distance_in_miles = float(distance_in_km * 0.621371)
+print(distance_in_miles)
+
+
+
+Problem: Estimating the risk of death from coronavirus.
+Consider the following questions in terms of True/False regarding someone else.
+ -Are you a cigarette addict older than 75 years old? Variable → age
+ -Do you have a severe chronic disease? Variable → chronic
+ -Is your immune system too weak? Variable → immune
+
+Set a logical algorithm using boolean logic operators (and/or) and the given variables in order to give us True (there is a risk of death) or False (there is not a risk of death) as a result.
+
+Solution:
+
+age = False
+chronic = False
+immune = False
+total = bool(age) or bool(chronic) or bool(immune)
+print(total)
+
+
+
+Problem: Using the all following items once each, set a correct boolean expression that returns write me. Use the print() function to display the result. 
+
+0
+and
+not
+"write me"
+
+Solution:
+
+print(not 0 and "write me")
+
+
+
+Problem: Using the all following items, set a correct boolean expression that returns []. Use the print() function to display the result. 
+
+{0}
+or
+and
+[]
+False
+
+Solution:
+
+print({0} and False or [])
+
+
+
+Problem: Remove a specific char at a specific/given index from a string.
+Given a string (clarusway) and an index number int n (n=3), return a new string where the character at index n has been removed.
+
+Solution:
+
+x = "clarusway"
+ind = 3
+first_part = x[:ind]
+second_part = x[ind+1:]
+print(first_part + second_part)
+
+
+
+Problem: In order to print the following text using .format() method, arrange the variable text.
+
+Hello! I am a new programmer and I love Clarusway.
+Note : Use only given three words ("Hello", "new", "love") in the .format parentheses.
+
+Solution:
+
+print("{0}! I am a {1} programmer and I {2} Clarusway".format("Hello","new","love"))
+
+print("{h} I am a {n} programer and I {l} Clarusway".format(n = "new", l = "love", h = "Hello"))
+
+
+
+Problem: Type a Python code to get the output of “Susan is a young lady and she is a student at the CLRWY IT university.”, using f-string with the variables below. (Use multiline f-string)
+
+name = "Susan"
+age = "young"
+gender = "lady"
+school = "CLRWY IT university"
+
+Solution:
+
+first = 'Susan'
+second = 'young'
+third = 'lady'
+fourth = 'CLRWY IT university'
+output = (f"{first} is a {second} {third}"
+         f"and she is a student at the {fourth}."
+         f"And she loves her school a lot")
+print(output)
+
+
+first = 'Susan'
+second = 'young'
+third = 'lady'
+fourth = 'CLRWY IT university'
+output = f"{first} is a {second} {third}" \
+         f"and she is a student at the {fourth}." \
+         f"And she loves her school a lot"
+print(output)
+

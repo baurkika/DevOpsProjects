@@ -1,0 +1,113 @@
+Python 08/11/2020 - 07:00pm (EST)
+
+
+empty_seat = 3
+if empty_seat > 3:
+    print("there is still seat to sit")
+print("end of message")
+
+
+minced_meat = True
+bread = True
+lettuce = False
+pepper = False
+grocery_store = True
+
+if minced_meat and bread and (lettuce or pepper) and grocery_store:
+    print("Bon a petit")
+
+
+entry = input("Enter yes/no: ")
+if entry.upper() == 'YES':
+    print(True)
+
+if entry.upper() == 'NO':
+    print(False)
+
+
+number = int(input("Can you just enter a number : "));  
+if number % 2 == 0 :  
+    print("{} is even".format(number))
+else:  
+    print("{} is even".format(number))
+
+
+number1 = int(input("Enter the first number: "))
+number2 = int(input("Enter the second number: "))
+number3 = int(input("Enter the third number: "))
+
+if number1 > number2 and number1 > number3:
+    print(f"The largest number is {number1}")
+elif number2 > number1 and number2 > number3:
+    print(f"The largest number is {number2}")
+elif number3 > number1 and number3 > number2:
+    print(f"The largest number is {number3}")
+else:
+    print("There is no single largest number")
+
+
+
+score = int (input("Enter your score :"))
+if score >= 90:
+    if score >= 95:
+        Score_letter="A+"
+    else:
+        Score_letter="A"
+elif score >= 80:
+    if score >= 85:
+        Score_letter="B+"
+    else:
+        Score_letter="B"
+else:
+    Score_letter="below B"
+print ("Your degree: %s" % Score_letter)
+
+
+
+our_number = 5
+
+number = 1
+while True:
+    if number > 1:
+        print("Try number ", number)
+    guess_number = int(input("Guess a number: "))
+
+    if guess_number < our_number:
+        print("Must be higher!")
+    elif guess_number > our_number:
+        print("Must be lower!")
+    else:
+        print("Congratulations!")
+        print(f"You have found the {our_number}")
+        break
+
+    number += 1
+    if number > 5:
+        print("You couldn't find!")
+        break
+
+
+Task:
+Find and print the length of the longest word.
+Write a program that ;
+Takes a string sentence consisting of a couple of words from the user,
+Compares and find out the longest word and prints the whole sentence and the length of the longest word as int type.
+Use while loop.
+
+sentence = input("Enter a sentence that contais at least 2 words: ")
+words = sentence.split(" ")
+longest = ''
+i = 0
+while i < len(words):                                             
+    if len(longest) < len(words[i]):                                 
+        longest = words[i]                                        
+    i += 1                                                        
+
+print("Longest word is ", longest)                                
+                                       
+
+
+input = "Clarusway"              
+for i in input:
+    print(i, end = " ")
+    

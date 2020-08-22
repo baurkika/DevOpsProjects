@@ -1,0 +1,43 @@
+Python - 07/28/2020 7:00pm
+
+
+print("Hello", end="")
+print("world")
+
+print("Hello", "world", sep="\t")
+
+print("Hello", "\bworld", sep=" ")
+
+print('Hello world\'s')
+
+
+
+print(None or 0 or 't' and 5)
+None or 0 or true
+false or True
+True
+
+
+print('123456789'[::-3])
+
+str_one = 'upper'
+print(str_one)
+str_one += 'case'
+print(str_one)
+str_one += 'letter'
+print(str_one)
+str_one += 'end'
+print(str_one)
+
+
+txt = """If we had bought ${amount} crypto coins at the weekend, 
+we would have had ${total} with a profit share of {rate}% after {day} days."""
+# print(txt.format(2000, 4152.32, 11, 5))
+print(txt.format(rate=11, total=4152.32, amount=2000,  day=5))
+
+pv=2000
+fv=4152.32
+r=11
+n=5
+answer=f"If we had bought ${pv} crypto coins at the weekend, we would have had ${fv} with a profit share of {r}% after {n} days."
+print(answer)
