@@ -4,7 +4,7 @@ Description: |
   CloudFormation Template for Phonebook Application.
   Phonebook is deployed ALB, Auto-scaling Group with RDS.
 
-ParameterName:
+Parameters:
   KeyPairName:
     Description: Enter the name of your Key Pair for SSH connections.
     Type: AWS::EC2::KeyPair::KeyName
