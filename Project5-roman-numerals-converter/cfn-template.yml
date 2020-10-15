@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  Cloudformation Template for Roman Numerals 
+
+Resources:
+  WebServerSG:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Enable HTTP for Web App
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  WebServer:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: ami-0947d2ba12ee1ff75
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - !Ref WebServerSG
+      KeyName: 
+      Tags:
+        - Key: Name
+          Value: Web Server of Roman Numerals App
+      UserData:
+        !Base64 |
+          #! /bin/bash
+          yum update -y
+          yum install python3 -y   
+          pip3 install flask
+          TOKEN="XXXX"
+          FOLDER="https://$TOKEN@raw.githubusercontent.com/clarusway/clarusway-aws-devops-pro-3-20/master/aws/projects/105-roman-numerals-converter/"
+          curl -s --create-dirs -o "/home/ec2-user/templates/index.html" -L "$FOLDER"templates/index.html
+          curl -s --create-dirs -o "/home/ec2-user/templates/result.html" -L "$FOLDER"templates/result.html
+          curl -s --create-dirs -o "/home/ec2-user/app.py" -L "$FOLDER"app.py
+          python3 /home/ec2-user/app.py
+
+Outputs:
+  WebsiteURL:
+    Description: Roman Numerals Converter App URL
+    Value: !Sub
+      - http://${PublicAddress}
+      - PublicAddress: !GetAtt WebServer.PublicDnsName

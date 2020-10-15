@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  Cloudformation Template for Kittens Carousel Static Website
+  Deployed on S3, Cloudfront and Route 53
+
+Parameters:
+  DomainName:
+    Description: DNS name of existing Amazon Route 53 hosted zone ex. clarusway.us
+    Type: AWS::Route53::HostedZone::Id
+  KittensDomainName:
+    Description: Full domain Name for the App. ex. kittens.clarusway.us
+    Type: String
+    AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
+
+Resources:
+  KittensBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref KittensDomainName
+      WebsiteConfiguration:
+        IndexDocument: index.html
+  KittensBucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket: !Ref KittensBucket  #required
+      PolicyDocument: #required
+        Statement:
+          - Sid: PublicReadforStaticWebsite
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            # Resource: !Join ['', ['arn:aws:s3:::', !Ref KittensBucket, '/*']]
+            Resource: !Sub ${KittensBucket.Arn}/*
+  KittensCertificate:
+    Type: "AWS::CertificateManager::Certificate"
+    Properties:
+      CertificateTransparencyLoggingPreference: ENABLED
+      DomainName: !Ref KittensDomainName #required for app kittens.clarusway.us
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref KittensDomainName
+          HostedZoneId: !Ref DomainName
+  KittenDNSName:
+    Type: "AWS::Route53::RecordSetGroup"
+    Properties:
+      HostedZoneId: !Ref DomainName
+      RecordSets:
+        - Name: !Ref KittensDomainName
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !GetAtt KittensCloudfront.DomainName
+  KittensCloudfront:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig: #required
+        Enabled: true
+        Aliases:
+            - !Ref KittensDomainName
+        ViewerCertificate:
+          AcmCertificateArn: !Ref KittensCertificate
+          SslSupportMethod: sni-only
+        Origins:
+          - DomainName: !Select [2, !Split ['/', !GetAtt KittensBucket.WebsiteURL]]
+            Id: KittensOrigin
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+        PriceClass: PriceClass_All
+        HttpVersion: http2
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+            TargetOriginId: KittensOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+                - GET
+                - HEAD
+            ForwardedValues:
+                QueryString: true
+                Cookies:
+                    Forward: none
+Outputs:
+  BucketName:
+    Description: S3 Bucket URL for Kittens Website
+    Value: !GetAtt KittensBucket.WebsiteURL
+  CloudfrontEndpoint:
+    Description: Endpoint for Kittens Cloudfront
+    Value: !GetAtt KittensCloudfront.DomainName
+  FullDomainName:
+    Description: Full Domain Name for the App
+    Value: !Ref KittensDomainName
