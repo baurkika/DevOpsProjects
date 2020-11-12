@@ -44,23 +44,23 @@ pipeline{
         stage('build'){
             agent any
             steps{
-                sh "docker build -t matt/jenkins-handson ."
-                sh "docker tag matt/jenkins-handson:latest  046402772087.dkr.ecr.us-east-1.amazonaws.com/matt/jenkins-handson:latest"
+                sh "docker build -t baurkika/jenkins-handson ."
+                sh "docker tag baurkika/jenkins-handson:latest  058443149739.dkr.ecr.us-east-1.amazonaws.com/baurkika/handson-jenkins:latest"
             }
         }
 
         stage('push'){
             agent any
             steps{
-                sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 046402772087.dkr.ecr.us-east-1.amazonaws.com"
-                sh "docker push 046402772087.dkr.ecr.us-east-1.amazonaws.com/matt/jenkins-handson:latest"
+                sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 058443149739.dkr.ecr.us-east-1.amazonaws.com"
+                sh "docker push 058443149739.dkr.ecr.us-east-1.amazonaws.com/baurkika/handson-jenkins:latest"
             }
         }
 
         stage('compose'){
             agent any
             steps{
-                sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 046402772087.dkr.ecr.us-east-1.amazonaws.com"
+                sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 058443149739.dkr.ecr.us-east-1.amazonaws.com"
                 sh "docker-compose up -d"
             }
         }
@@ -69,19 +69,19 @@ pipeline{
             agent any
             steps{
                 sh '''
-                    if [ -f "mattsJenkinsKey3_public.pem" ]
+                    if [ -f "MBP-formatted_public.pem" ]
                     then 
                         echo "file exists..."
                     else
                         aws ec2 create-key-pair \
                           --region us-east-1 \
-                          --key-name mattsJenkinsKey3.pem \
+                          --key-name MBP-formatted.pem \
                           --query KeyMaterial \
-                          --output text > mattsJenkinsKey3.pem
+                          --output text > MBP-formatted.pem
 
-                        chmod 400 mattsJenkinsKey3.pem
+                        chmod 400 MBP-formatted.pem
 
-                        ssh-keygen -y -f mattsJenkinsKey3.pem >> mattsJenkinsKey3_public.pem
+                        ssh-keygen -y -f MBP-formatted.pem >> MBP-formatted_public.pem
                     fi
                 '''                
             }
@@ -96,11 +96,11 @@ pipeline{
                     if [ "$running" != '' ]
                     then
                         docker-compose down
-                        exist="$(aws eks list-clusters | grep matts-cluster2)" || true
+                        exist="$(aws eks list-clusters | grep baurs-cluster2)" || true
                         if [ "$exist" == '' ]
                         then
                             eksctl create cluster \
-                                --name matts-cluster2 \
+                                --name baurs-cluster2 \
                                 --version 1.18 \
                                 --region us-east-1 \
                                 --nodegroup-name my-nodes \
@@ -109,7 +109,7 @@ pipeline{
                                 --nodes-min 1 \
                                 --nodes-max 2 \
                                 --ssh-access \
-                                --ssh-public-key  mattsJenkinsKey3_public.pem \
+                                --ssh-public-key  MBP-formatted_public.pem \
                                 --managed
                         else
                             echo 'no need to create cluster...'
